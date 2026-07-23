@@ -124,6 +124,4 @@ A 500-row telemetry dataset was used to evaluate supervised learning algorithms 
 | VCC | Voltage at the Common Collector |
 | GND | Ground |
 
-## 13. Source Document
 
-Prepared from the thesis/document titled *"Predictive Waste Collection Scheduling Through IoT Sensor and Network Optimization."*

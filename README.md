@@ -93,10 +93,10 @@ A Flask web application that pairs an Arduino-based smart bin (ultrasonic fill-l
    | `ARDUINO_PORT` | Serial port for the Arduino | `COM7` |
    | `OPENAI_API_KEY` | Enables real AI classification (unset = dummy mode) | unset |
    | `SECRET_KEY` | Flask session secret | `dev-key-change-in-prod` |
-   | `MAIL_USERNAME` | Gmail account used to send alerts | *(hardcoded in repo — see Security note)* |
-   | `MAIL_PASSWORD` | Gmail app password | *(hardcoded in repo — see Security note)* |
-   | `MAIL_DEFAULT_SENDER` | From address for alert emails | *(hardcoded in repo)* |
-   | `ALERT_EMAIL_RECIPIENT` | Where alerts are sent | *(hardcoded in repo)* |
+   | `MAIL_USERNAME` | Gmail account used to send alerts | Add a gmail to send alerts |
+   | `MAIL_PASSWORD` | Gmail app password | Add App password  |
+   | `MAIL_DEFAULT_SENDER` | From address for alert emails | Add a gmail to recieve alerts |
+   | `ALERT_EMAIL_RECIPIENT` | Where alerts are sent | Add a gmail to recieve alerts |
 
 4. **Run**
    ```bash

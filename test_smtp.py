@@ -2,9 +2,9 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-gmail_user = 'rb0494259@gmail.com'
-gmail_pass = 'dbwv mvlq nkjb acam'
-to_email = 'shahzadabbas4178@gmail.com'  # Recipient
+gmail_user = ''
+gmail_pass = ''
+to_email = ''  # Recipient
 subject = 'Config Test - Smart Waste Bin'
 body = 'Ye test email hai. Config sahi lag raha hai! 📧'
 

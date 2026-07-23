@@ -1,131 +1,129 @@
-# Smart Waste Bin — Predictive Waste Collection Scheduling Through IoT Sensor and Network
+# Predictive Waste Collection Scheduling Through IoT Sensor and Network Optimization
 
-A Flask web application that pairs an Arduino-based smart bin (ultrasonic fill-level sensors + servo-controlled compartments) with a webcam and an AI image classifier to automatically sort waste into **plastic**, **paper**, and **glass** compartments, track fill levels in real time, and email alerts when a bin is nearly full.
+**Smart Waste Bin (SWB) — Project Documentation**
 
-> **Note:** This README was generated from a direct analysis of the source code, since the repository does not currently include one.
+## 1. Project Overview
 
-## How it works
+This project presents a Smart Waste Bin (SWB), an IoT-enabled waste management system that combines AI-based visual waste classification, automated mechanical segregation, real-time fill-level sensing, and predictive network optimization. The system classifies waste into plastic, paper/wrapper, and glass, directs each item to the appropriate compartment, monitors bin capacity, and notifies waste-management authorities when collection is required.
 
-1. A webcam frame is captured and sent to an image classifier (OpenAI GPT-4 Vision) to identify the waste type. If no OpenAI API key is configured, the app falls back to a **dummy mode** that picks a class at random so the rest of the pipeline can still be tested.
-2. The classification result is mapped to a serial command (`PLASTIC`, `PAPER`, `GLASS`) and sent over USB to an Arduino, which is expected to open the matching compartment's servo.
-3. The Arduino also reports back ultrasonic distance readings per compartment (e.g. `Plastic: 10 cm`), which the app parses and converts into a 0–100% fill level.
-4. When a compartment's fill level crosses 90%, the app emails an alert (with a cooldown to avoid spamming).
-5. A Flask web dashboard shows the live camera feed, current fill levels, manual override buttons per compartment, and a history of past scans, behind a login system.
+![Smart Bin Fill Level](images/smart%20bin%20fill%20level.jpeg)
 
-## Features
+## 2. Problem Statement
 
-- Live MJPEG camera stream with on/off toggle
-- AI-based waste classification (OpenAI Vision API) with an offline dummy fallback
-- Serial communication with an Arduino for bin actuation and ultrasonic level readings
-- Real-time bin fill-level tracking and threshold-based email alerts (SMTP/Gmail)
-- Manual compartment control from the UI
-- User accounts (register/login/logout) with per-user geolocation captured at login (reverse-geocoded via OpenStreetMap Nominatim)
-- Scan history log (SQLite via SQLAlchemy)
-- Standalone debug/test scripts for serial ports, SMTP, and calibration
+Traditional waste collection often relies on manual segregation and fixed collection routes. This causes mixed recyclable waste, overflowing bins, unnecessary collection trips, fuel consumption, and inefficient use of municipal resources. The SWB addresses these problems by combining automated segregation with real-time monitoring and demand-driven collection.
 
-## Tech stack
+## 3. Objectives
 
-| Layer | Technology |
+- Automate identification and segregation of plastic, paper/wrapper, and glass waste.
+- Use servo motors to actuate the correct compartment or lid.
+- Monitor compartment fill levels in real time using HC-SR04 ultrasonic sensors.
+- Send alerts containing bin status, waste type, and location information.
+- Use predictive modeling to reduce network congestion and improve telemetry delivery.
+- Support demand-based waste collection and reduce unnecessary collection journeys.
+
+## 4. System Architecture
+
+The architecture follows a modular **Sense → Think → Act** model:
+
+- **Perception Layer:** camera/ESP32-CAM or Pi Camera and ultrasonic sensors collect visual and fill-level data.
+- **Cognitive Layer:** cloud AI/API or CNN-based processing classifies waste; predictive ML analyzes telemetry and congestion risk.
+- **Execution Layer:** Arduino/microcontroller controls servo motors, sensing, alerts, and communication.
+- **Communication Layer:** GSM/GPRS and GPS provide remote status reporting and location-aware alerts.
+- **Power Layer:** regulated 5V control/actuation supply with LM2596 regulation and battery backup for selected components.
+
+![Modular Sense-Think-Act Architecture](images/Modular%20sense%20think%20act%20architecture.jpeg)
+
+## 5. System Workflow
+
+1. User deposits waste.
+2. Camera captures an image of the waste item.
+3. AI service classifies the item as plastic, paper/wrapper, or glass.
+4. Microcontroller receives the classification result.
+5. The corresponding servo motor opens or actuates the correct compartment.
+6. HC-SR04 sensors continuously estimate fill levels.
+7. When a compartment reaches the configured full threshold, an alert is generated.
+8. GSM/GPS communication transmits the bin ID, waste type/status, and location.
+9. Predictive network scheduling staggers transmissions to reduce congestion and improve collection planning.
+
+![System Workflow](images/System%20workflow.jpeg)
+
+## 6. Hardware and Software Components
+
+- Arduino Uno / microcontroller
+- Camera module or USB webcam
+- Three servo motors for plastic, paper, and glass compartments
+- Three HC-SR04 ultrasonic sensors
+- SIM800L/SIM808 GSM/GPRS communication module
+- GPS module such as NEO-6M/7M
+- LM2596 step-down switching regulator
+- Pushbutton, status LED, buzzer, wiring, and power supply
+- Cloud AI/API or CNN-based image classification
+- Machine-learning models: Random Forest, XGBoost, Decision Tree, and Logistic Regression
+
+![Component to MCU System Mapping](images/component%20to%20MCU%20system%20mapping.jpeg)
+
+## 7. AI and Predictive Network Model
+
+A 500-row telemetry dataset was used to evaluate supervised learning algorithms for congestion prediction. Random Forest was selected as the preferred model, achieving the highest reported accuracy (96.8%) and recall (0.97). The predictive network strategy uses bin capacity and telemetry information to stagger transmissions rather than allowing simultaneous alert bursts.
+
+![Training and Validation Graph](images/Training%20and%20validation%20graph.jpeg)
+
+## 8. Key Results
+
+- **Random Forest:** 96.8% accuracy, 0.96 precision, 0.97 recall, 0.96 F1-score.
+- Average network latency decreased from 155 ms to 52 ms.
+- Packet delivery ratio increased from 91.5% to 99.6%.
+- Reported congestion events decreased from 14/day to 1/day.
+- Validation loss reached 0.065 at the end of the evaluated curve.
+- The prototype supports demand-driven collection and can reduce overflow and unnecessary collection trips.
+
+![Performance Gains Graph](images/Performance%20gains%20graph.jpeg)
+
+## 9. Applications
+
+- Smart cities and municipal waste management
+- Schools, universities, and offices
+- Hospitals, shopping malls, railway stations, and airports
+- Industrial and corporate campuses
+- Public parks and residential areas
+
+## 10. Constraints and Deployment Considerations
+
+- Estimated total power draw: approximately 12–15 W idle and 22–30 W peak.
+- Reported total prototype cost: approximately PKR 60,000–67,000, excluding variable ongoing API usage.
+- Operating temperature: 0°C–50°C.
+- IP65-style enclosure is recommended for dust/humidity protection.
+- Reported prototype dimensions are approximately 70 cm × 50 cm × 100 cm, with an estimated weight of 15–20 kg.
+- Cloud-based image classification introduces network dependency and reported response times of approximately 4–7 seconds.
+- Regular cleaning of sensors/camera and electrical inspection are required.
+
+## 11. Future Work
+
+- Integrate renewable power, particularly solar energy, for outdoor autonomous deployment.
+- Move more AI inference to edge devices to reduce latency and dependence on internet connectivity.
+- Improve scalability for city-wide deployment and larger fleets of smart bins.
+- Strengthen model robustness across lighting, weather, camera angles, and occlusion conditions.
+- Integrate GIS-based route optimization and municipal dashboards for automated collection planning.
+
+## 12. Abbreviations
+
+| Abbreviation | Full Form |
 |---|---|
-| Backend | Python, Flask, Flask-Login, Flask-SQLAlchemy |
-| Database | SQLite |
-| Computer vision | OpenCV (`cv2`) |
-| AI classification | OpenAI API (GPT-4 Vision) |
-| Hardware link | `pyserial` (Arduino over USB) |
-| Alerts | SMTP (Gmail) |
-| Frontend | Jinja2 templates, vanilla JS/CSS |
+| AI | Artificial Intelligence |
+| API | Application Programming Interface |
+| CNN | Convolutional Neural Network |
+| ESP32 | Espressif 32-bit Microcontroller |
+| GIS | Geographic Information System |
+| GSM | Global System for Mobile Communications |
+| GPS | Global Positioning System |
+| HC-SR04 | Ultrasonic Distance Sensor Module |
+| IoT | Internet of Things |
+| MCU | Microcontroller Unit |
+| PWM | Pulse Width Modulation |
+| SMS | Short Message Service |
+| VCC | Voltage at the Common Collector |
+| GND | Ground |
 
-## Repository structure
+## 13. Source Document
 
-```
-.
-├── app.py                 # Flask app factory, all routes
-├── config.py               # App/hardware/email configuration
-├── models.py                # SQLAlchemy models: User, ScanLog, BinAlert
-├── check_ports.py           # Lists available serial ports
-├── debug_serial.py          # Serial module sanity check
-├── debug_email_real.py      # Standalone SMTP send test (uses config.py values)
-├── test_smtp.py             # Standalone SMTP send test (hardcoded credentials)
-├── test_suite.py            # Test runner
-├── utils.rar                # utils/ package: serial_handler.py, ai_detector.py, email_utils.py
-├── static.rar                # static/ assets: script.js, style.css
-├── templates.rar             # templates/: index, login, register, dashboard, history, about, base
-└── tests.rar                 # tests/: test_calibration.py, test_email.py
-```
-
-> **The `utils`, `static`, `templates`, and `tests` folders are committed as `.rar` archives, not as plain folders.** You'll need to extract them (e.g. with `unrar` or 7-Zip) before running the app, so that `utils/`, `static/`, and `templates/` exist as real directories next to `app.py`.
-
-## Hardware requirements
-
-- Arduino (or compatible board) connected over USB, running firmware that:
-  - Accepts `PLASTIC\n`, `PAPER\n`, `GLASS\n`, `BEEP\n` commands to drive servos
-  - Streams ultrasonic distance readings as lines like `Plastic: 10 cm`
-  - **No Arduino sketch (`.ino`) is included in this repo** — you'll need to write/supply the firmware yourself to match this protocol.
-- Ultrasonic distance sensors, one per compartment
-- Servos to open/close each compartment
-- A webcam accessible to OpenCV as device `0`
-
-## Setup
-
-1. **Clone and extract archives**
-   ```bash
-   git clone https://github.com/qaisarshaheen-source/Predictive-waste-collection-scheduling-through-IOT-Sensor-and-Network.git
-   cd Predictive-waste-collection-scheduling-through-IOT-Sensor-and-Network
-   unrar x utils.rar
-   unrar x static.rar
-   unrar x templates.rar
-   unrar x tests.rar
-   ```
-
-2. **Install dependencies**
-
-   There is no `requirements.txt` in the repo. Based on the imports used, install:
-   ```bash
-   pip install flask flask-login flask-sqlalchemy werkzeug opencv-python requests numpy pyserial openai
-   ```
-
-3. **Configure environment variables**
-
-   `config.py` reads these from the environment (with defaults for local dev):
-
-   | Variable | Purpose | Default |
-   |---|---|---|
-   | `ARDUINO_PORT` | Serial port for the Arduino | `COM7` |
-   | `OPENAI_API_KEY` | Enables real AI classification (unset = dummy mode) | unset |
-   | `SECRET_KEY` | Flask session secret | `dev-key-change-in-prod` |
-   | `MAIL_USERNAME` | Gmail account used to send alerts | Add a gmail to send alerts |
-   | `MAIL_PASSWORD` | Gmail app password | Add App password  |
-   | `MAIL_DEFAULT_SENDER` | From address for alert emails | Add a gmail to recieve alerts |
-   | `ALERT_EMAIL_RECIPIENT` | Where alerts are sent | Add a gmail to recieve alerts |
-
-4. **Run**
-   ```bash
-   python app.py
-   ```
-   The app creates `users.db` (SQLite) on first run and starts at `http://127.0.0.1:5000`.
-
-## Routes
-
-| Route | Method(s) | Description |
-|---|---|---|
-| `/register`, `/login`, `/logout` | GET/POST | Auth |
-| `/` | GET | Dashboard (login required) |
-| `/video_feed` | GET | MJPEG camera stream |
-| `/toggle_camera` | POST | Turn the camera on/off |
-| `/detect_waste` | POST | Capture a frame, classify it, actuate the servo, log the scan |
-| `/manual_control` | POST | Manually trigger a compartment (`plastic`/`paper`/`glass`/`beep`/`reset`) |
-| `/status` | GET | Current fill levels, last classification, active alerts |
-| `/history` | GET | Last 50 scans |
-| `/about` | GET | About page |
-| `/test_email` | GET | Sends a test alert email |
-
-## Testing
-
-```bash
-python -m unittest tests/test_calibration.py
-python -m unittest tests/test_email.py
-```
-`test_calibration.py` verifies the distance-to-fill-percentage math in `serial_handler.py`; `test_email.py` mocks `smtplib` to verify alert sending and cooldown logic.
-
-
-
+Prepared from the thesis/document titled *"Predictive Waste Collection Scheduling Through IoT Sensor and Network Optimization."*

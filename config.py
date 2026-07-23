@@ -25,11 +25,11 @@ PORT = 5000
 # Email Config
 MAIL_SERVER = 'smtp.gmail.com'
 MAIL_PORT = 587
-MAIL_USERNAME = os.getenv('MAIL_USERNAME', 'rb0494259@gmail.com')
-MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', 'dbwvmvlqnkjbacam')
+MAIL_USERNAME = os.getenv('MAIL_USERNAME', )
+MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', )
 MAIL_USE_TLS = True
-MAIL_DEFAULT_SENDER = os.getenv('MAIL_DEFAULT_SENDER', 'rb0494259@gmail.com')  # Ya 'rb0494259@gmail.com' for safety
-ALERT_EMAIL_RECIPIENT = os.getenv('ALERT_EMAIL_RECIPIENT', 'shahzadabbas4178@gmail.com')
+MAIL_DEFAULT_SENDER = os.getenv('MAIL_DEFAULT_SENDER', )  # Ya 'rb0494259@gmail.com' for safety
+ALERT_EMAIL_RECIPIENT = os.getenv('ALERT_EMAIL_RECIPIENT', )
 ALERT_COOLDOWN = 60  # Seconds between alerts (Lowered for testing)
 
 # Camera Defaults
